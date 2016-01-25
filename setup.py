@@ -20,7 +20,7 @@ def main():
 
 
 if __name__ == "__main__":
-    reqs = parse_requirements('requirements.txt')
+    reqs = parse_requirements('requirements.txt', session=False)
     reqs = [ir for ir in reqs]
 
     main()

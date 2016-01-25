@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from builtins import *
+import os
 import requests
 
 __config = {
@@ -18,21 +19,8 @@ def __get_header_dict():
     return {'user-agent': __config['userAgent']}
 
 
-#
-# def get_api_url(uri, params=None):
-#     if not params:
-#         params = []
-#     url = "%s/%s" % (__build_api_url(), uri)
-#     print("Debug: API Url is %s" % url)
-#     if params is not None and isinstance(params, list) and len(params) > 0:
-#         params = "/".join(param for param in params)
-#         print("Debug: Parameters are %s" % params)
-#         url += params
-#     return url
-
 def get_api_url(uri):
     url = "%s/%s" % (__build_api_url(), uri)
-    print("Debug -> API Url is %s" % url)
     return url
 
 
@@ -51,9 +39,40 @@ def get_resource(id, version=None):
     return r.json()
 
 
-def get_resource_download(id, version="latest"):
-    r = requests.get(get_api_url('resources/%s/versions/%s/download' % (id, version)), headers=__get_header_dict())
+def get_resource_versions(id):
+    r = requests.get(get_api_url('resources/%s/versions' % id), headers=__get_header_dict())
     return r.json()
+
+
+def get_resource_latest_version(id):
+    versions = get_resource_versions(id)
+    version_ids = {}
+    for version in versions:
+        link = version['download']
+        link_version = link.split("?version=", 1)[1]
+        version_ids[version['version']] = (int(link_version))
+
+    max_key = max(version_ids, key=version_ids.get)
+    return max_key
+
+
+def get_resource_download(id, version="latest"):
+    v_id = None
+
+    if version == "latest":
+        v_id = get_resource_latest_version(id)
+    else:
+        v_id = version
+
+    versions = get_resource_versions(id)
+    link = None
+    for version in versions:
+        if version['version'] != str(v_id):
+            continue
+        link = version['download']
+        break
+
+    return link
 
 
 def get_resource_author(id):
