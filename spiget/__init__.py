@@ -1,7 +1,6 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from builtins import *
-import os
 import requests
 
 __config = {
@@ -142,3 +141,18 @@ def search_resources(query, field=None):
 def search_author(query):
     r = requests.get(get_api_url('search/authors/%s' % query), headers=__get_header_dict())
     return r.json()
+
+
+def is_valid_resource(id, version=None):
+    resource = get_resource(id, version)
+    if "error" in resource:
+        return False
+    else:
+        return True
+
+
+def is_valid_author(id):
+    author = get_author_details(id)
+    if "error" in author:
+        return False
+    return True
