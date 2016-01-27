@@ -1,144 +1,72 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-from builtins import *
-import os
-import requests
+from spiget import web
+from spiget.author import SpigotAuthor
+from spiget.category import SpigotCategory
+from spiget.resource import SpigotResource
 
-__config = {
-    'domain': 'http://api.spiget.org',
-    'version': 'v1',
-    'userAgent': 'Spiget-PythonAPI/0.0.1',
-}
+get_api_url = web.get_api_url
+# All functions for interactions with Resources via JSON
+get_resources = web.get_resources
+get_resource = web.get_resource
+get_resource_name = web.get_resource_name
+get_resource_versions = web.get_resource_versions
+get_resource_latest_version = web.get_resource_latest_version
+get_resource_download = web.get_resource_download
+get_resource_author = web.get_resource_author
+get_new_resources = web.get_new_resources
+search_resources = web.search_resources
+is_valid_resource = web.is_valid_resource
 
+# All functions for interacting with categories via JSON
+get_categories = web.get_categories
+get_category_name = web.get_category_name
+get_category_resources = web.get_category_resources
 
-def __build_api_url():
-    return "%s/%s" % (__config['domain'], __config['version'])
-
-
-def __get_header_dict():
-    return {'user-agent': __config['userAgent']}
-
-
-def get_api_url(uri):
-    url = "%s/%s" % (__build_api_url(), uri)
-    return url
-
-
-def get_resources(size=100):
-    r = requests.get(get_api_url('resources/'), params={"size": size}, headers=__get_header_dict())
-    return r.json()
-
-
-def get_resource(id, version=None):
-    r = None
-    if version is not None:
-        r = requests.get(get_api_url('resources/%s/versions/%s' % (id, version)), headers=__get_header_dict())
-    else:
-        r = requests.get(get_api_url('resources/%s' % id), headers=__get_header_dict())
-
-    return r.json()
+# All functions for interacting with Authors via JSON
+get_authors = web.get_authors
+get_author_details = web.get_author_details
+get_author_resources = web.get_author_resources
+get_new_authors = web.get_new_authors
+search_author = web.search_author
+is_valid_author = web.is_valid_author
 
 
-def get_resource_versions(id):
-    r = requests.get(get_api_url('resources/%s/versions' % id), headers=__get_header_dict())
-    return r.json()
+def retrieve_resource(id_or_name):
+    """
+    Retrieve a SpigotResource via its id, or name.
+
+    Will raise an exception if unable to retrieve a resource via the given id, or name.
+    :param id_or_name: The integer id, or name string
+    :raises SpigotResourceInitializeException
+    :return: SpigotResource with all possible data initialized.
+    """
+    return SpigotResource(id_or_name)
 
 
-def get_resource_latest_version(id):
-    versions = get_resource_versions(id)
-    version_ids = {}
-    for version in versions:
-        link = version['download']
-        link_version = link.split("?version=", 1)[1]
-        version_ids[version['version']] = (int(link_version))
-
-    max_key = max(version_ids, key=version_ids.get)
-    return max_key
+def retrieve_author(id=None, username=None):
+    """
+    Retrieve a SpigotAuthor via their id, or username.
+    :param id:
+    :param username:
+    :return:
+    """
+    return SpigotAuthor(id=id, username=username)
 
 
-def get_resource_download(id, version="latest"):
-    v_id = None
-
-    if version == "latest":
-        v_id = get_resource_latest_version(id)
-    else:
-        v_id = version
-
-    versions = get_resource_versions(id)
-    link = None
-    for version in versions:
-        if version['version'] != str(v_id):
-            continue
-        link = version['download']
-        break
-
-    return link
+class SpigotResourceException(Exception):
+    pass
 
 
-def get_resource_author(id):
-    r = requests.get(get_api_url('resources/%s/author' % id), headers=__get_header_dict())
-    return r.json()
+class SpigotResourceInitializeException(SpigotResourceException):
+    pass
 
 
-def get_new_resources(size=25):
-    r = requests.get(get_api_url('resources/new'), params={"size": size}, headers=__get_header_dict())
-    return r.json()
+class SpigotAuthorException(Exception):
+    pass
 
 
-def get_categories(sub_category=""):
-    r = requests.get(get_api_url('categories/%s' % sub_category), headers=__get_header_dict())
-    return r.json()
+class SpigotAuthorInitializeException(SpigotAuthorException):
+    pass
 
 
-def get_category_resources(category, size=None):
-    r = None
-    if size is not None and size > 0:
-        r = requests.get(get_api_url('categories/%s/resources' % category), params={"size": size},
-                         headers=__get_header_dict())
-    else:
-        r = requests.get(get_api_url('categories/%s/resources' % category), headers=__get_header_dict())
-    return r.json()
-
-
-def get_authors(size=None):
-    r = None
-    if size is not None and size > 0:
-        r = requests.get(get_api_url('authors'), params={'size': size}, headers=__get_header_dict())
-    else:
-        r = requests.get(get_api_url('authors'), headers=__get_header_dict())
-
-    return r.json()
-
-
-def get_author_details(id):
-    r = requests.get(get_api_url('authors/%s' % id), headers=__get_header_dict())
-    return r.json()
-
-
-def get_author_resources(id):
-    r = requests.get(get_api_url('authors/%s/resources' % id), headers=__get_header_dict())
-    return r.json()
-
-
-def get_new_authors(size=None):
-    r = None
-    if size is not None:
-        r = requests.get(get_api_url('authors/new'), params={"size": size}, headers=__get_header_dict())
-    else:
-        r = requests.get(get_api_url('authors/new'), headers=__get_header_dict())
-
-    return r.json()
-
-
-def search_resources(query, field=None):
-    r = None
-    if field is not None:
-        r = requests.get(get_api_url('search/resources/%s/%s' % (query, field)), headers=__get_header_dict())
-    else:
-        r = requests.get(get_api_url('search/resources/%s' % query), headers=__get_header_dict())
-    return r.json()
-
-
-def search_author(query):
-    r = requests.get(get_api_url('search/authors/%s' % query), headers=__get_header_dict())
-    return r.json()
+class SpigotCategoryException(Exception):
+    pass

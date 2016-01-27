@@ -6,7 +6,7 @@ from pip.req import parse_requirements
 def main():
     setup(
         name='spiget',
-        version='0.0.1',
+        version='0.1.0',
         packages=[
             'spiget'
         ],
