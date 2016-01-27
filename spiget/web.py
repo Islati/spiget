@@ -1,7 +1,6 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from builtins import *
-import os
 import requests
 
 __config = {
@@ -37,6 +36,11 @@ def get_resource(id, version=None):
         r = requests.get(get_api_url('resources/%s' % id), headers=__get_header_dict())
 
     return r.json()
+
+
+def get_resource_name(id):
+    r = requests.get(get_api_url('resources/%s' % id), headers=__get_header_dict())
+    return r.json()['name']
 
 
 def get_resource_versions(id):
@@ -88,6 +92,10 @@ def get_new_resources(size=25):
 def get_categories(sub_category=""):
     r = requests.get(get_api_url('categories/%s' % sub_category), headers=__get_header_dict())
     return r.json()
+
+
+def get_category_name(id):
+    return get_categories(id)['name']
 
 
 def get_category_resources(category, size=None):
@@ -142,3 +150,17 @@ def search_resources(query, field=None):
 def search_author(query):
     r = requests.get(get_api_url('search/authors/%s' % query), headers=__get_header_dict())
     return r.json()
+
+
+def is_valid_resource(resource_id, version=None):
+    resource = get_resource(resource_id, version=version)
+    if "error" in resource:
+        return False
+    return True
+
+
+def is_valid_author(id):
+    author = get_author_details(id)
+    if "error" in author:
+        return False
+    return True
