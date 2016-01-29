@@ -1,10 +1,10 @@
 from setuptools import setup
 
-from pip.req import parse_requirements
+# from pip.req import parse_requirements
 
-reqs = parse_requirements('requirements.txt', session=False)
-reqs = [str(ir.req) for ir in reqs]
-
+# reqs = parse_requirements('requirements.txt', session=False)
+# reqs = [str(ir.req) for ir in reqs]
+#
 
 def main():
     setup(
@@ -20,7 +20,9 @@ def main():
         description='Spiget.org API Interaction',
         download_url='https://github.com/TechnicalBro/spiget/tarball/0.1.0',
         keywords=['spigotmc', 'spiget', 'minecraft', 'bukkit'],
-        install_requires=reqs
+        install_requires=[
+            "requests==2.9.1"
+        ]
     )
 
 

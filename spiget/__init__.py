@@ -3,7 +3,7 @@ import requests
 __config = {
     'domain': 'http://api.spiget.org',
     'version': 'v1',
-    'userAgent': 'Spiget-PythonAPI/0.0.1',
+    'userAgent': 'Spiget-PythonAPI/0.1.0',
 }
 
 
