@@ -9,7 +9,7 @@ from setuptools import setup
 def main():
     setup(
         name='spiget',
-        version='0.1.0',
+        version='0.1.1',
         packages=[
             'spiget'
         ],
@@ -18,7 +18,7 @@ def main():
         author='Brandon Curtis',
         author_email='freebird.brandon@gmail.com',
         description='Spiget.org API Interaction',
-        download_url='https://github.com/TechnicalBro/spiget/tarball/0.1.0',
+        download_url='https://github.com/TechnicalBro/spiget/tarball/0.1.1',
         keywords=['spigotmc', 'spiget', 'minecraft', 'bukkit'],
         install_requires=[
             "requests==2.9.1"
