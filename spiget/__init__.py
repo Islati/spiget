@@ -3,7 +3,7 @@ import requests
 __config = {
     'domain': 'http://api.spiget.org',
     'version': 'v1',
-    'userAgent': 'Spiget-PythonAPI/0.1.0',
+    'userAgent': 'Spiget-PythonAPI/0.1.2',
 }
 
 
@@ -204,6 +204,9 @@ class SpigotResource(object):
 
     def get_download_link(self, version="latest"):
         return get_resource_download(self.resource_id, version)
+
+    def has_version(self, version):
+        return version in self.versions
 
     @staticmethod
     def from_json(json):
