@@ -205,6 +205,9 @@ class SpigotResource(object):
     def get_download_link(self, version="latest"):
         return get_resource_download(self.resource_id, version)
 
+    def get_latest_version(self):
+        return get_resource_latest_version(self.resource_id)
+
     def has_version(self, version):
         return version in self.versions
 

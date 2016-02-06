@@ -18,7 +18,7 @@ def main():
         author='Brandon Curtis',
         author_email='freebird.brandon@gmail.com',
         description='Spiget.org API Interaction',
-        download_url='https://github.com/TechnicalBro/spiget/tarball/0.1.1',
+        download_url='https://github.com/TechnicalBro/spiget/tarball/0.1.2',
         keywords=['spigotmc', 'spiget', 'minecraft', 'bukkit'],
         install_requires=[
             "requests==2.9.1"
