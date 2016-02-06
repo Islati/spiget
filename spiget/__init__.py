@@ -1,3 +1,9 @@
+try:
+    from urllib import urlsplit
+except ImportError:  # Py3.4+
+    from urllib.parse import urlsplit
+
+import os
 import requests
 
 __config = {
@@ -13,6 +19,10 @@ def __build_api_url():
 
 def __get_header_dict():
     return {'user-agent': __config['userAgent']}
+
+
+def __filename_from_url(url):
+    "%s%s" % os.path.splitext(os.path.basename(urlsplit(url).path))
 
 
 def get_api_url(uri):
@@ -193,7 +203,6 @@ class SpigotResource(object):
             self.versions.append(version)
 
         self.category_id = json['category']['id']
-
         self.external = json['external']
 
         self.file_size = ""
@@ -201,6 +210,8 @@ class SpigotResource(object):
         if not self.external:
             self.file_size = json['file']['size']
             self.file_type = json['file']['type']
+        else:
+            self.file_type = os.path.splitext(os.path.basename(urlsplit(self.download).path))[1]
 
     def get_download_link(self, version="latest"):
         return get_resource_download(self.resource_id, version)
